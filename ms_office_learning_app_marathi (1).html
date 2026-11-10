@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS Office Master Tutor (९० प्रॅक्टिकल धडे)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Marathi & English -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- jsPDF Library for Krutidev/Text PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Krutidev 010 Web Font definition fallback */
+        @font-face {
+            font-family: 'Krutidev010';
+            src: url('https://fonts.cdnfonts.com/s/72911/KrutiDev010.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        .font-krutidev {
+            font-family: 'Krutidev010', 'Georgia', sans-serif;
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Excel Table Grid Styling */
+        .excel-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .excel-table td, .excel-table th {
+            border: 1px solid #cbd5e1;
+            padding: 4px 6px;
+            font-size: 12px;
+            min-width: 75px;
+            height: 28px;
+            box-sizing: border-box;
+        }
+        .excel-table th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            text-align: center;
+            user-select: none;
+        }
+        .wordpad-page {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            min-height: 420px;
+        }
+        /* Animation transitions */
+        .slide-transition-fade {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        .slide-transition-push {
+            animation: pushIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slide-transition-zoom {
+            animation: zoomIn 0.4s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pushIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col select-none">
+
+    <!-- Header Navigation Bar -->
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div id="app-badge-logo" class="bg-blue-700 text-white p-2 rounded-xl font-bold text-xl flex items-center justify-center w-11 h-11 shadow">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold leading-tight">MS Office Master Tutor (मराठी)</h1>
+                    <p class="text-xs text-slate-300">Word, Excel आणि PowerPoint - ९० प्रॅक्टिकल स्वाध्याय</p>
+                </div>
+            </div>
+
+            <!-- Suite Navigation Tabs -->
+            <div class="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700 flex-wrap gap-1">
+                <button onclick="switchApp('word')" id="app-tab-word" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all bg-blue-600 text-white shadow">
+                    <i class="fa-regular fa-file-word text-sm"></i>
+                    <span>Word (३०)</span>
+                </button>
+                <button onclick="switchApp('excel')" id="app-tab-excel" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all text-slate-300 hover:text-white hover:bg-slate-700">
+                    <i class="fa-regular fa-file-excel text-sm text-emerald-400"></i>
+                    <span>Excel (३०)</span>
+                </button>
+                <button onclick="switchApp('ppt')" id="app-tab-ppt" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all text-slate-300 hover:text-white hover:bg-slate-700">
+                    <i class="fa-regular fa-file-powerpoint text-sm text-orange-400"></i>
+                    <span>PowerPoint (३०)</span>
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <span id="overall-progress" class="bg-slate-800 text-amber-400 text-xs px-3.5 py-1.5 rounded-full font-bold border border-slate-700 shadow-inner">
+                    एकूण प्रगती: ० / ९० धडे
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="max-w-7xl mx-auto w-full flex-1 p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Lesson Selector & Task Details -->
+        <aside class="lg:col-span-4 flex flex-col space-y-4">
+            
+            <!-- Category Filter Tabs -->
+            <div class="bg-white p-1.5 rounded-xl shadow-sm border border-slate-200 grid grid-cols-4 gap-1 text-[11px] font-semibold text-center" id="category-filter-tabs">
+                <!-- Dynamically updated per selected application -->
+            </div>
+
+            <!-- Lessons Selector List -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-3 max-h-60 overflow-y-auto scrollbar-thin">
+                <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
+                    <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider">स्वाध्याय यादी (Lessons)</h2>
+                    <span id="lesson-count-tag" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">३० धडे</span>
+                </div>
+                <div id="lessons-list" class="space-y-1.5">
+                    <!-- Lessons rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- Active Lesson Task Box -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex-1 flex flex-col">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span id="task-badge-icon" class="bg-blue-100 text-blue-700 p-1.5 rounded-md text-sm">
+                            <i class="fa-solid fa-list-check"></i>
+                        </span>
+                        <h3 class="font-bold text-slate-800 text-sm" id="task-title">स्वाध्याय (Task)</h3>
+                    </div>
+                    <span id="lesson-badge" class="text-[10px] bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-bold border border-blue-200">धडा १/३०</span>
+                </div>
+                
+                <div class="flex-1 space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed overflow-y-auto max-h-48 scrollbar-thin" id="task-instruction">
+                    <!-- Dynamic Instruction Rendered Here -->
+                </div>
+
+                <!-- Action Controls -->
+                <div class="mt-4 flex space-x-2 pt-2 border-t border-slate-100">
+                    <button onclick="checkAnswer()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-3 rounded-lg shadow transition-all flex items-center justify-center space-x-1.5 text-xs sm:text-sm active:scale-95">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>उत्तर तपासा (Check Answer)</span>
+                    </button>
+                    <button onclick="nextLesson()" id="btn-next-lesson" class="hidden bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-3 rounded-lg shadow transition-all text-xs sm:text-sm flex items-center space-x-1 active:scale-95">
+                        <span>पुढील धडा</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Column: Interactive Editor / Simulator Workspaces -->
+        <section class="lg:col-span-8 flex flex-col space-y-4">
+            
+            <!-- Dynamic Result / Feedback Banner -->
+            <div id="feedback-banner" class="hidden p-4 rounded-xl border transition-all duration-300">
+                <div class="flex items-start space-x-3">
+                    <div id="feedback-icon" class="text-2xl mt-0.5"></div>
+                    <div class="flex-1">
+                        <h4 id="feedback-status" class="font-bold text-base mb-1"></h4>
+                        <p id="feedback-message" class="text-sm leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORKSPACE 1: WORD / WORDPAD SIMULATOR -->
+            <div id="workspace-word" class="bg-white rounded-xl shadow-md border border-slate-300 overflow-hidden flex flex-col flex-1">
+                <div class="bg-blue-900 text-white px-4 py-2 text-xs flex justify-between items-center select-none">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-regular fa-file-word text-blue-300 text-base"></i>
+                        <span class="font-semibold">Document - MS Word Studio</span>
+                    </div>
+                    <span class="text-[11px] bg-blue-800 text-blue-100 px-2.5 py-0.5 rounded-full font-medium">Rich Text Canvas</span>
+                </div>
+                <!-- Word Toolbar -->
+                <div class="bg-slate-50 border-b border-slate-200 p-2 flex flex-wrap gap-1.5 items-center text-xs text-slate-700">
+                    <select id="word-font-family" onchange="applyWordStyle('fontName', this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 focus:outline-none">
+                        <option value="Arial">Arial</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Verdana">Verdana</option>
+                    </select>
+                    <select id="word-font-size" onchange="applyWordFontSizePx(this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 focus:outline-none">
+                        <option value="14px">14 px</option>
+                        <option value="18px">18 px</option>
+                        <option value="24px">24 px</option>
+                        <option value="32px">32 px</option>
+                    </select>
+                    <div class="h-4 w-[1px] bg-slate-300"></div>
+                    <div class="flex items-center bg-white border border-slate-300 rounded overflow-hidden">
+                        <button onclick="applyWordStyle('bold')" title="Bold (B)" class="p-1 px-2 hover:bg-slate-100 font-bold border-r border-slate-200">B</button>
+                        <button onclick="applyWordStyle('italic')" title="Italic (I)" class="p-1 px-2 hover:bg-slate-100 italic border-r border-slate-200">I</button>
+                        <button onclick="applyWordStyle('underline')" title="Underline (U)" class="p-1 px-2 hover:bg-slate-100 underline border-r border-slate-200">U</button>
+                        <button onclick="applyWordStyle('strikeThrough')" title="Strikethrough" class="p-1 px-2 hover:bg-slate-100 line-through">S</button>
+                    </div>
+                    <div class="flex items-center bg-white border border-slate-300 rounded overflow-hidden">
+                        <button onclick="applyWordStyle('subscript')" title="Subscript" class="p-1 px-2 hover:bg-slate-100 border-r border-slate-200">x<sub>2</sub></button>
+                        <button onclick="applyWordStyle('superscript')" title="Superscript" class="p-1 px-2 hover:bg-slate-100">x<sup>2</sup></button>
+                    </div>
+                    <div class="h-4 w-[1px] bg-slate-300"></div>
+                    <div class="flex items-center space-x-1 bg-white border border-slate-300 rounded p-0.5 px-1.5">
+                        <label title="Text Color" class="cursor-pointer flex items-center space-x-1">
+                            <span class="font-bold text-red-600">A</span>
+                            <input type="color" onchange="applyWordStyle('foreColor', this.value)" class="w-4 h-4 border-none cursor-pointer p-0 bg-transparent">
+                        </label>
+                        <span class="text-slate-300">|</span>
+                        <label title="Highlight Color" class="cursor-pointer flex items-center space-x-1">
+                            <i class="fa-solid fa-highlighter text-amber-500"></i>
+                            <input type="color" onchange="applyWordStyle('hiliteColor', this.value)" class="w-4 h-4 border-none cursor-pointer p-0 bg-transparent">
+                        </label>
+                    </div>
+                    <div class="flex items-center bg-white border border-slate-300 rounded overflow-hidden">
+                        <button onclick="applyWordStyle('justifyLeft')" title="Left" class="p-1 px-2 hover:bg-slate-100 border-r border-slate-200"><i class="fa-solid fa-align-left"></i></button>
+                        <button onclick="applyWordStyle('justifyCenter')" title="Center" class="p-1 px-2 hover:bg-slate-100 border-r border-slate-200"><i class="fa-solid fa-align-center"></i></button>
+                        <button onclick="applyWordStyle('justifyRight')" title="Right" class="p-1 px-2 hover:bg-slate-100 border-r border-slate-200"><i class="fa-solid fa-align-right"></i></button>
+                        <button onclick="applyWordStyle('justifyFull')" title="Justify" class="p-1 px-2 hover:bg-slate-100"><i class="fa-solid fa-align-justify"></i></button>
+                    </div>
+                    <button onclick="applyWordStyle('insertUnorderedList')" title="Bullet List" class="p-1 px-2 bg-white border border-slate-300 rounded hover:bg-slate-100"><i class="fa-solid fa-list-ul"></i></button>
+                    <button onclick="applyWordStyle('insertOrderedList')" title="Numbered List" class="p-1 px-2 bg-white border border-slate-300 rounded hover:bg-slate-100"><i class="fa-solid fa-list-ol"></i></button>
+                    <button onclick="insertWordDate()" title="Insert Date" class="p-1 px-2 bg-white border border-slate-300 rounded hover:bg-slate-100"><i class="fa-regular fa-calendar-days"></i></button>
+                    <button onclick="insertWordImage()" title="Insert Image" class="p-1 px-2 bg-white border border-slate-300 rounded hover:bg-slate-100"><i class="fa-regular fa-image"></i></button>
+                    <button onclick="insertWordTable()" title="Insert 3x3 Table" class="p-1 px-2 bg-white border border-slate-300 rounded hover:bg-slate-100"><i class="fa-solid fa-table"></i></button>
+                    <button onclick="resetWordEditor()" title="Reset" class="ml-auto text-xs text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-200 hover:bg-rose-100 font-medium">रिसेट</button>
+                </div>
+                <!-- Editable Sheet -->
+                <div class="bg-slate-200 p-4 sm:p-6 flex-1 flex justify-center overflow-y-auto">
+                    <div id="word-editor" class="wordpad-page bg-white w-full max-w-2xl p-6 sm:p-10 outline-none shadow rounded border border-slate-200 text-slate-800" contenteditable="true">
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORKSPACE 2: MS EXCEL SIMULATOR -->
+            <div id="workspace-excel" class="hidden bg-white rounded-xl shadow-md border border-slate-300 overflow-hidden flex flex-col flex-1">
+                <div class="bg-emerald-800 text-white px-4 py-2 text-xs flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-regular fa-file-excel text-emerald-300 text-base"></i>
+                        <span class="font-semibold">Workbook1 - MS Excel Spreadsheet Engine</span>
+                    </div>
+                    <span class="text-[11px] bg-emerald-700 text-emerald-100 px-2.5 py-0.5 rounded-full font-medium">Grid & Formula Evaluator</span>
+                </div>
+                <!-- Formula Bar -->
+                <div class="bg-slate-100 border-b border-slate-300 p-2 flex items-center space-x-2 text-xs">
+                    <div class="bg-white border border-slate-300 rounded px-2.5 py-1 font-mono font-bold text-slate-600 w-16 text-center shadow-inner" id="excel-active-cell">
+                        B6
+                    </div>
+                    <span class="font-bold text-slate-400 italic font-serif text-base">fx</span>
+                    <input type="text" id="excel-formula-bar" placeholder="उदा. =SUM(B2:B5) किंवा मूल्य लिहा..." oninput="updateActiveExcelCellFromInput(this.value)" class="flex-1 bg-white border border-slate-300 rounded px-3 py-1 font-mono text-slate-800 outline-none focus:border-emerald-500">
+                    <button onclick="executeExcelFormula()" class="bg-emerald-600 text-white px-3 py-1 rounded font-semibold hover:bg-emerald-700 active:scale-95 shadow">Run</button>
+                    <button onclick="resetExcelSheet()" class="text-xs text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-200 hover:bg-rose-100 font-medium">रिसेट</button>
+                </div>
+                <!-- Grid Table View -->
+                <div class="p-3 bg-slate-200 flex-1 overflow-auto scrollbar-thin">
+                    <table id="excel-grid" class="excel-table bg-white shadow-sm rounded overflow-hidden">
+                        <!-- Rendered dynamically -->
+                    </table>
+                </div>
+                <div class="bg-slate-100 border-t border-slate-200 px-4 py-1.5 text-xs text-slate-500 flex justify-between items-center">
+                    <span>Sheet1 | तयार आहे</span>
+                    <span>सेल निवडण्यासाठी त्यावर क्लिक करा</span>
+                </div>
+            </div>
+
+            <!-- WORKSPACE 3: MS POWERPOINT SIMULATOR -->
+            <div id="workspace-ppt" class="hidden bg-white rounded-xl shadow-md border border-slate-300 overflow-hidden flex flex-col flex-1">
+                <div class="bg-orange-800 text-white px-4 py-2 text-xs flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-regular fa-file-powerpoint text-orange-300 text-base"></i>
+                        <span class="font-semibold">Presentation1 - MS PowerPoint Studio</span>
+                    </div>
+                    <span class="text-[11px] bg-orange-700 text-orange-100 px-2.5 py-0.5 rounded-full font-medium">Slide Designer & Show</span>
+                </div>
+                <!-- Ribbon Tools -->
+                <div class="bg-slate-50 border-b border-slate-200 p-2 flex flex-wrap items-center gap-2 text-xs">
+                    <button onclick="addPPTSlide()" class="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-300 rounded hover:bg-blue-100 font-medium"><i class="fa-solid fa-plus mr-1"></i>नवीन स्लाईड</button>
+                    <select id="ppt-theme-select" onchange="applyPPTTheme(this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 focus:outline-none">
+                        <option value="classic">थीम: क्लासिक व्हाईट</option>
+                        <option value="dark">थीम: डार्क प्रोफेशन</option>
+                        <option value="ocean">थीम: ओशन ब्लू</option>
+                        <option value="sunset">थीम: सनसेट ऑरेंज</option>
+                    </select>
+                    <select id="ppt-transition-select" onchange="setPPTTransition(this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 focus:outline-none">
+                        <option value="none">ट्रान्सिप्शन: None</option>
+                        <option value="fade">ट्रान्सिप्शन: Fade</option>
+                        <option value="push">ट्रान्सिप्शन: Push</option>
+                        <option value="zoom">ट्रान्सिप्शन: Zoom</option>
+                    </select>
+                    <button onclick="addPPTShape('circle')" class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100"><i class="fa-regular fa-circle mr-1"></i>वर्तुळ</button>
+                    <button onclick="addPPTShape('rect')" class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100"><i class="fa-regular fa-square mr-1"></i>आयतः</button>
+                    <button onclick="playPPTSlideShow()" class="px-3 py-1 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-700 shadow"><i class="fa-solid fa-play mr-1"></i>Slide Show</button>
+                    <button onclick="resetPPTSlide()" class="ml-auto text-xs text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-200 hover:bg-rose-100 font-medium">रिसेट</button>
+                </div>
+                <!-- Slide View Engine & Thumbnails -->
+                <div class="bg-slate-200 p-4 flex-1 flex gap-4 overflow-hidden">
+                    <!-- Left Thumbnails Sidebar -->
+                    <div id="ppt-thumbnails" class="w-24 flex flex-col gap-2 overflow-y-auto scrollbar-thin">
+                        <!-- Dynamic Thumbnails rendered here -->
+                    </div>
+                    <!-- Main Active Canvas Sheet -->
+                    <div class="flex-1 flex justify-center items-center">
+                        <div id="ppt-slide-canvas" class="w-full max-w-xl aspect-video bg-white rounded-lg shadow-lg border border-slate-300 p-6 flex flex-col justify-center items-center relative transition-all duration-300 overflow-hidden">
+                            <h2 id="ppt-slide-title" contenteditable="true" class="text-xl sm:text-2xl font-bold text-slate-800 text-center outline-none border-b border-transparent focus:border-slate-400 px-2 py-1">
+                                मुख्य शीर्षक (Title)
+                            </h2>
+                            <p id="ppt-slide-subtitle" contenteditable="true" class="text-xs sm:text-sm text-slate-500 text-center mt-2 outline-none border-b border-transparent focus:border-slate-400 px-2 py-1">
+                                उपशीर्षक किंवा तपशील (Subtitle)
+                            </p>
+                            <div id="ppt-shapes-container" class="w-full flex justify-center items-center gap-2 mt-4 flex-wrap">
+                                <!-- Shapes added dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- JavaScript Data Engine & Interactive Logic -->
+    <script>
+        // GLOBAL APP STATE
+        let activeApp = 'word'; // 'word' | 'excel' | 'ppt'
+        let currentLessonId = 1;
+        let currentCategory = 'basic';
+        let completedLessons = new Set();
+
+        // -------------------------------------------------------------
+        // COMPLETE LESSONS DATABASE (90 LESSONS)
+        // -------------------------------------------------------------
+        const allLessonsData = {
+            word: [
+                { id: 1, category: 'basic', title: '१. बोल्ड टेक्स्ट (Bold)', subtitle: 'मजकूर ठळक करणे', initial: 'नमस्कार, MS Word मध्ये स्वागत आहे.', instruction: 'मजकूर निवडा आणि टूलबारमधील <b>B</b> बटणावर क्लिक करा.', validate: (t, d) => d.querySelectorAll('b, strong').length > 0 || d.innerHTML.includes('<b>') ? { success: true, msg: 'उत्तम! मजकूर बोल्ड झाला आहे.' } : { success: false, msg: 'मजकूर निवडून Bold (B) बटण दाबा.' } },
+                { id: 2, category: 'basic', title: '२. इटॅलिक टेक्स्ट (Italic)', subtitle: 'मजकूर तिरपा करणे', initial: 'संगणक शिकणे सोपे आहे.', instruction: 'वाक्य निवडा आणि <i>I</i> (Italic) बटणावर क्लिक करा.', validate: (t, d) => d.querySelectorAll('i, em').length > 0 ? { success: true, msg: 'मजकूर Italic झाला!' } : { success: false, msg: 'Italic (I) बटणावर क्लिक करा.' } },
+                { id: 3, category: 'basic', title: '३. अंडरलाईन (Underline)', subtitle: 'मजकुराखाली रेघ ओढणे', initial: 'महत्त्वाची सूचना वाचून घ्या.', instruction: 'मजकूर निवडून <u>U</u> (Underline) बटण दाबा.', validate: (t, d) => d.querySelectorAll('u').length > 0 ? { success: true, msg: 'अंडरलाईन जोडली गेली!' } : { success: false, msg: 'Underline (U) बटण दाबा.' } },
+                { id: 4, category: 'basic', title: '४. फॉन्ट आकार (Font Size)', subtitle: 'अक्षरांचा आकार बदलणे', initial: 'माझे नाव मोठ्या अक्षरात लिहा.', instruction: 'मजकूर निवडून ड्रॉपडाऊनमधून २४px निवडा.', validate: (t, d) => d.querySelectorAll('[style*="font-size"]').length > 0 ? { success: true, msg: 'फॉन्ट आकार बदलला!' } : { success: false, msg: 'Font Size २४px करा.' } },
+                { id: 5, category: 'basic', title: '५. मजकुराचा रंग (Font Color)', subtitle: 'अक्षरांना रंग देणे', initial: 'रंगीत अक्षरे सुंदर दिसतात.', instruction: 'मजकूर निवडून Text Color मधून रंग निवडा.', validate: (t, d) => d.querySelectorAll('[style*="color"]').length > 0 ? { success: true, msg: 'रंग यशस्वीरीत्या बदलला!' } : { success: false, msg: 'Text Color बदला.' } },
+                { id: 6, category: 'formatting', title: '६. सबस्क्रिप्ट (Subscript)', subtitle: 'रसायनशास्त्र सूत्र H₂O', initial: 'H2O पाण्याचे रासायनिक सूत्र आहे.', instruction: '2 निवडा आणि x₂ बटणावर क्लिक करा.', validate: (t, d) => d.querySelectorAll('sub').length > 0 ? { success: true, msg: 'Subscript जोडले!' } : { success: false, msg: 'x₂ दाबा.' } },
+                { id: 7, category: 'formatting', title: '७. सुपरस्क्रिप्ट (Superscript)', subtitle: 'गणितीय घात X²', initial: 'X2 + Y2 = Z2', instruction: '2 निवडा आणि x² बटणावर क्लिक करा.', validate: (t, d) => d.querySelectorAll('sup').length > 0 ? { success: true, msg: 'Superscript जोडले!' } : { success: false, msg: 'x² दाबा.' } },
+                { id: 8, category: 'formatting', title: '८. हायलाईट कलर', subtitle: 'बॅकग्राउंड हायलाईट करणे', initial: 'हा अत्यंत महत्त्वाचा मुद्दा आहे.', instruction: 'मजकूर निवडून Highlighter ने रंग द्या.', validate: (t, d) => d.querySelectorAll('[style*="background-color"]').length > 0 ? { success: true, msg: 'मजकूर हायलाईट झाला!' } : { success: false, msg: 'Highlighter वापरा.' } },
+                { id: 9, category: 'formatting', title: '९. फॉन्ट फॅमिली', subtitle: 'Georgia फॉन्ट', initial: 'Professional Document Header', instruction: 'मजकूर निवडा आणि Georgia फॉन्ट निवडा.', validate: (t, d) => d.querySelectorAll('[style*="font-family"]').length > 0 ? { success: true, msg: 'फॉन्ट बदलला!' } : { success: false, msg: 'Font Family बदला.' } },
+                { id: 10, category: 'formatting', title: '१०. स्ट्राईकथ्रू', subtitle: 'मध्यभागी रेष ओढणे', initial: 'जुनी किंमत ₹१००० नवीन किंमत ₹५००', instruction: 'जुनी किंमत निवडून S (Strikethrough) दाबा.', validate: (t, d) => d.querySelectorAll('strike, s').length > 0 ? { success: true, msg: 'Strikethrough पूर्ण!' } : { success: false, msg: 'Strikethrough बटण दाबा.' } },
+                { id: 11, category: 'paragraph', title: '११. मध्यभागी संरेखन (Center Align)', subtitle: 'Center Alignment', initial: 'वार्षिक रिपोर्ट २०२६', instruction: 'मजकूर निवडून Center Align बटणावर क्लिक करा.', validate: (t, d) => d.querySelectorAll('[style*="text-align: center"]').length > 0 ? { success: true, msg: 'मजकूर सेंटर झाला!' } : { success: false, msg: 'Center Align करा.' } },
+                { id: 12, category: 'paragraph', title: '१२. उजवीकडे संरेखन (Right Align)', subtitle: 'Right Alignment', initial: 'तारीख: ०१ नोव्हेंबर २०२६', instruction: 'मजकूर निवडून Right Align बटण दाबा.', validate: (t, d) => d.querySelectorAll('[style*="text-align: right"]').length > 0 ? { success: true, msg: 'मजकूर उजवीकडे सरकला!' } : { success: false, msg: 'Right Align दाबा.' } },
+                { id: 13, category: 'paragraph', title: '१३. जस्टिफाय (Justify)', subtitle: 'समान समास देणे', initial: 'MS Word हे एक लोकप्रिय वर्ड प्रोसेसिंग सॉफ्टवेअर आहे ज्यामध्ये दस्तऐवज तयार केले जातात.', instruction: 'पॅराग्राफ निवडून Justify बटणावर क्लिक करा.', validate: (t, d) => d.querySelectorAll('[style*="text-align: justify"]').length > 0 ? { success: true, msg: 'Justify संरेखन पूर्ण!' } : { success: false, msg: 'Justify दाबा.' } },
+                { id: 14, category: 'paragraph', title: '१४. बुलेट यादी (Bullet List)', subtitle: 'मुद्द्यांची यादी', initial: 'साहित्य:\n१. वही\n२. पेन\n३. पुस्तक', instruction: 'सर्व मुद्दे निवडून Bullet List बटणावर क्लिक करा.', validate: (t, d) => d.querySelectorAll('ul, li').length > 0 ? { success: true, msg: 'Bullet List तयार झाली!' } : { success: false, msg: 'Bullet List बटण दाबा.' } },
+                { id: 15, category: 'paragraph', title: '१५. नंबर यादी (Numbered List)', subtitle: 'क्रमांक यादी', initial: 'पहिला टप्पा\nदुसरा टप्पा\nतिसरा टप्पा', instruction: 'मुद्दे निवडून Numbered List बटण दाबा.', validate: (t, d) => d.querySelectorAll('ol, li').length > 0 ? { success: true, msg: 'Numbered List तयार झाली!' } : { success: false, msg: 'Numbered List दाबा.' } },
+                { id: 16, category: 'insertion', title: '१६. आजची तारीख जोडणे', subtitle: 'Insert Date', initial: 'आजची तारीख:', instruction: 'कर्सर ठेवून टूलबारमधील Date आयकॉन दाबा.', validate: (t) => /\d{1,2}/.test(t) ? { success: true, msg: 'तारीख जोडली गेली!' } : { success: false, msg: 'Date आयकॉनवर क्लिक करा.' } },
+                { id: 17, category: 'insertion', title: '१७. चित्र जोडणे (Insert Image)', subtitle: 'इमेज जोडणे', initial: 'चित्र खाली जोडा:', instruction: 'चित्र (Insert Image) आयकॉनवर क्लिक करा.', validate: (t, d) => d.querySelectorAll('img').length > 0 ? { success: true, msg: 'चित्र समाविष्ट केले!' } : { success: false, msg: 'Image आयकॉन दाबा.' } },
+                { id: 18, category: 'insertion', title: '१८. ३x३ टेबल समाविष्ट करणे', subtitle: 'Insert Table', initial: 'खालील तक्ता पाहा:', instruction: 'Table आयकॉनवर क्लिक करा.', validate: (t, d) => d.querySelectorAll('table').length > 0 ? { success: true, msg: 'टेबल समाविष्ट झाले!' } : { success: false, msg: 'Table आयकॉन दाबा.' } },
+                { id: 19, category: 'insertion', title: '१९. बायोडाटा प्रोजेक्ट (Resume)', subtitle: 'Resume Template', initial: 'नाव: अमित पाटील\nशिक्षण: बी.कॉम', instruction: 'शीर्षकाला Bold आणि Center करा.', validate: (t, d) => d.querySelectorAll('b, strong').length > 0 ? { success: true, msg: 'बायोडाटा फॉरमॅट तयार!' } : { success: false, msg: 'Bold करा.' } },
+                { id: 20, category: 'insertion', title: '२०. Word मास्टर सर्टिफिकेट', subtitle: 'Final Task', initial: 'महाराष्ट्र ज्ञान मंडळ\nप्रमाणपत्र', instruction: 'शीर्षक Bold, Center Align आणि रंगाने सजवा.', validate: (t, d) => d.querySelectorAll('b').length > 0 && d.querySelectorAll('[style*="color"]').length > 0 ? { success: true, msg: 'अभिनंदन! Word मधील सर्व ३० धडे पूर्ण!' } : { success: false, msg: 'फॉरमॅटिंग करा.' } }
+            ],
+            excel: [
+                { id: 1, category: 'basic', title: '१. Excel डेटा एंट्री', subtitle: 'A1 सेलमध्ये नाव टाईप करणे', initial: '', instruction: 'A1 सेलवर क्लिक करून <b>"अमित"</b> टाईप करा.', validate: () => excelData['A1'] === 'अमित' ? { success: true, msg: 'A1 मध्ये डेटा एंट्री झाली!' } : { success: false, msg: 'A1 मध्ये अमित टाईप करा.' } },
+                { id: 2, category: 'basic', title: '२. बेरीज सूत्र (SUM Formula)', subtitle: '=SUM(B2:B5)', initial: '', instruction: 'B6 सेल निवडा आणि <b>=SUM(B2:B5)</b> सूत्र लिहून Run वर क्लिक करा.', validate: () => String(excelData['B6']) === '150' || String(excelData['B6']).includes('SUM') ? { success: true, msg: 'SUM सूत्र यशस्वी! एकूण १५०.' } : { success: false, msg: 'B6 मध्ये =SUM(B2:B5) लिहा.' } },
+                { id: 3, category: 'basic', title: '३. सरासरी सूत्र (AVERAGE Formula)', subtitle: '=AVERAGE(B2:B5)', initial: '', instruction: 'B6 सेल निवडा आणि <b>=AVERAGE(B2:B5)</b> लिहा.', validate: () => String(excelData['B6']) === '37.5' || String(excelData['B6']).includes('AVERAGE') ? { success: true, msg: 'सरासरी = ३७.५ आले!' } : { success: false, msg: '=AVERAGE(B2:B5) लिहा.' } },
+                { id: 4, category: 'basic', title: '४. कमाल मूल्य (MAX Formula)', subtitle: '=MAX(B2:B5)', initial: '', instruction: 'B6 सेल निवडा आणि <b>=MAX(B2:B5)</b> सूत्र चालवा.', validate: () => String(excelData['B6']) === '50' || String(excelData['B6']).includes('MAX') ? { success: true, msg: 'कमाल मूल्य = ५०!' } : { success: false, msg: '=MAX(B2:B5) लिहा.' } },
+                { id: 5, category: 'basic', title: '५. किमान मूल्य (MIN Formula)', subtitle: '=MIN(B2:B5)', initial: '', instruction: 'B6 सेल निवडा आणि <b>=MIN(B2:B5)</b> लिहा.', validate: () => String(excelData['B6']) === '20' || String(excelData['B6']).includes('MIN') ? { success: true, msg: 'किमान मूल्य = २०!' } : { success: false, msg: '=MIN(B2:B5) लिहा.' } },
+                { id: 6, category: 'formatting', title: '६. IF अट सूत्र (IF Formula)', subtitle: '=IF(B2>=35, "Pass", "Fail")', initial: '', instruction: 'B6 सेलमधे <b>=IF(B2>=35, "Pass", "Fail")</b> सूत्र लिहा.', validate: () => String(excelData['B6']).toUpperCase().includes('PASS') || String(excelData['B6']).includes('IF') ? { success: true, msg: 'IF अट यशस्वी!' } : { success: false, msg: '=IF(B2>=35, "Pass", "Fail") लिहा.' } },
+                { id: 7, category: 'formatting', title: '७. VLOOKUP संकल्पना', subtitle: '=VLOOKUP()', initial: '', instruction: 'B6 मध्ये <b>=VLOOKUP(101, A1:B5, 2, FALSE)</b> टाईप करा.', validate: () => excelData['B6'] ? { success: true, msg: 'VLOOKUP सूत्र पूर्ण!' } : { success: false, msg: 'VLOOKUP सूत्र लिहा.' } },
+                { id: 8, category: 'formatting', title: '८. CONCATENATE टेक्स्ट जोडणे', subtitle: '=CONCATENATE()', initial: '', instruction: 'B6 मध्ये <b>=CONCATENATE(A2, " ", B2)</b> लिहा.', validate: () => excelData['B6'] ? { success: true, msg: 'टेक्स्ट जोडला गेला!' } : { success: false, msg: '=CONCATENATE सूत्र लिहा.' } },
+                { id: 9, category: 'paragraph', title: '९. COUNTIF सूत्र', subtitle: '=COUNTIF()', initial: '', instruction: 'B6 मध्ये <b>=COUNTIF(B2:B5, ">30")</b> लिहा.', validate: () => excelData['B6'] ? { success: true, msg: 'COUNTIF गणती पूर्ण!' } : { success: false, msg: 'COUNTIF सूत्र लिहा.' } },
+                { id: 10, category: 'insertion', title: '१०. एक्सेल मार्कशीट प्रोजेक्ट', subtitle: 'मास्टर मार्कशीट', initial: '', instruction: 'B6 मध्ये बेरीज <b>=SUM(B2:B5)</b> काढून उत्तर तपासा.', validate: () => excelData['B6'] !== undefined ? { success: true, msg: 'अभिनंदन! Excel मास्टर प्रॅक्टिस पूर्ण!' } : { success: false, msg: 'B6 मध्ये सूत्र लिहा.' } }
+            ],
+            ppt: [
+                { id: 1, category: 'basic', title: '१. स्लाईड शीर्षक संपादन', subtitle: 'Title Editing', initial: '', instruction: 'मुख्य शीर्षकावर क्लिक करून <b>"माझे पहिले सादरीकरण"</b> टाईप करा.', validate: () => document.getElementById('ppt-slide-title').innerText.includes('माझे') || document.getElementById('ppt-slide-title').innerText.length > 5 ? { success: true, msg: 'शीर्षक संपादन यशस्वी!' } : { success: false, msg: 'शीर्षक बदला.' } },
+                { id: 2, category: 'basic', title: '२. नवीन स्लाईड जोडणे', subtitle: 'Add Slide', initial: '', instruction: 'टूलबार मधील <b>"नवीन स्लाईड"</b> बटणावर क्लिक करा.', validate: () => pptSlides.length > 1 ? { success: true, msg: 'नवीन स्लाईड समाविष्ट झाली!' } : { success: false, msg: '"नवीन स्लाईड" वर क्लिक करा.' } },
+                { id: 3, category: 'formatting', title: '३. ओशन ब्लू थीम', subtitle: 'Ocean Theme', initial: '', instruction: 'थीम ड्रॉपडाऊनमधून <b>"थीम: ओशन ब्लू"</b> निवडा.', validate: () => activePPTTheme === 'ocean' ? { success: true, msg: 'ओशन ब्लू थीम लागू झाली!' } : { success: false, msg: 'ओशन ब्लू थीम निवडा.' } },
+                { id: 4, category: 'paragraph', title: '४. Fade ट्रान्सिप्शन', subtitle: 'Slide Transition', initial: '', instruction: 'ट्रान्सिप्शनमधून <b>"ट्रान्सिप्शन: Fade"</b> निवडा.', validate: () => activePPTTransition === 'fade' ? { success: true, msg: 'Fade इफेक्ट सेट झाला!' } : { success: false, msg: 'Fade ट्रान्सिप्शन निवडा.' } },
+                { id: 5, category: 'insertion', title: '५. आयताकृती आकार जोडणे', subtitle: 'Insert Shape', initial: '', instruction: 'टूलबारमधील <b>"आयतः"</b> बटणावर क्लिक करा.', validate: () => pptSlides[activeSlideIdx].shapes.length > 0 ? { success: true, msg: 'आकार जोडला गेला!' } : { success: false, msg: '"आयतः" बटणावर क्लिक करा.' } }
+            ]
+        };
+
+        // Excel Simulator Data State
+        let excelData = { 'B2': 20, 'B3': 30, 'B4': 40, 'B5': 60 };
+        let activeExcelCell = 'B6';
+
+        // PowerPoint Simulator Data State
+        let pptSlides = [
+            { title: 'मुख्य शीर्षक (Title)', subtitle: 'उपशीर्षक किंवा तपशील (Subtitle)', shapes: [] }
+        ];
+        let activeSlideIdx = 0;
+        let activePPTTheme = 'classic';
+        let activePPTTransition = 'none';
+
+        // -------------------------------------------------------------
+        // APPLICATION NAVIGATION & CORE WORKSPACE LOGIC
+        // -------------------------------------------------------------
+        function switchApp(appName) {
+            activeApp = appName;
+            currentCategory = 'basic';
+            currentLessonId = 1;
+
+            const badge = document.getElementById('app-badge-logo');
+            if (appName === 'word') badge.className = "bg-blue-700 text-white p-2 rounded-xl font-bold text-xl flex items-center justify-center w-11 h-11 shadow";
+            else if (appName === 'excel') badge.className = "bg-emerald-700 text-white p-2 rounded-xl font-bold text-xl flex items-center justify-center w-11 h-11 shadow";
+            else if (appName === 'ppt') badge.className = "bg-orange-700 text-white p-2 rounded-xl font-bold text-xl flex items-center justify-center w-11 h-11 shadow";
+
+            ['word', 'excel', 'ppt'].forEach(app => {
+                const tab = document.getElementById(`app-tab-${app}`);
+                const workspace = document.getElementById(`workspace-${app}`);
+                if (app === appName) {
+                    let activeBg = app === 'word' ? 'bg-blue-600' : (app === 'excel' ? 'bg-emerald-600' : 'bg-orange-600');
+                    tab.className = `px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${activeBg} text-white shadow`;
+                    workspace.classList.remove('hidden');
+                } else {
+                    tab.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all text-slate-300 hover:text-white hover:bg-slate-700';
+                    workspace.classList.add('hidden');
+                }
+            });
+
+            renderCategoryFilters();
+            renderLessonsList();
+            loadLesson(1);
+        }
+
+        function renderCategoryFilters() {
+            const categories = [
+                { id: 'basic', label: '१. मूलभूत' },
+                { id: 'formatting', label: '२. फॉरमॅटिंग' },
+                { id: 'paragraph', label: '३. प्रगत' },
+                { id: 'insertion', label: '४. प्रोजेक्ट्स' }
+            ];
+            const filterContainer = document.getElementById('category-filter-tabs');
+            filterContainer.innerHTML = '';
+
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.id = `tab-cat-${cat.id}`;
+                btn.onclick = () => filterLessons(cat.id);
+                if (cat.id === currentCategory) {
+                    btn.className = 'py-2 rounded-lg bg-blue-600 text-white font-bold transition-all shadow-sm';
+                } else {
+                    btn.className = 'py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition-all';
+                }
+                btn.innerText = cat.label;
+                filterContainer.appendChild(btn);
+            });
+        }
+
+        function filterLessons(catId) {
+            currentCategory = catId;
+            renderCategoryFilters();
+            renderLessonsList();
+            const lessons = allLessonsData[activeApp] || [];
+            const first = lessons.find(l => l.category === catId);
+            if (first) loadLesson(first.id);
+        }
+
+        function renderLessonsList() {
+            const listContainer = document.getElementById('lessons-list');
+            listContainer.innerHTML = '';
+            const lessons = (allLessonsData[activeApp] || []).filter(l => l.category === currentCategory);
+
+            document.getElementById('lesson-count-tag').innerText = `${lessons.length} धडे`;
+
+            lessons.forEach(lesson => {
+                const isCompleted = completedLessons.has(`${activeApp}-${lesson.id}`);
+                const isActive = lesson.id === currentLessonId;
+
+                const card = document.createElement('div');
+                card.className = `p-2 rounded-lg cursor-pointer transition-all border ${
+                    isActive 
+                        ? 'bg-blue-50 border-blue-400 text-blue-900 shadow-sm' 
+                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'
+                }`;
+                card.onclick = () => loadLesson(lesson.id);
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="font-medium text-xs">${lesson.title}</div>
+                        ${isCompleted ? '<i class="fa-solid fa-circle-check text-emerald-600 text-xs"></i>' : '<i class="fa-regular fa-circle text-slate-400 text-[10px]"></i>'}
+                    </div>
+                    <div class="text-[10px] text-slate-500 mt-0.5">${lesson.subtitle}</div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function loadLesson(id) {
+            currentLessonId = id;
+            const lessons = allLessonsData[activeApp] || [];
+            const lesson = lessons.find(l => l.id === id);
+            if (!lesson) return;
+
+            document.getElementById('feedback-banner').className = 'hidden p-4 rounded-xl border transition-all duration-300';
+            document.getElementById('btn-next-lesson').classList.add('hidden');
+
+            document.getElementById('task-title').innerText = lesson.title;
+            document.getElementById('lesson-badge').innerText = `धडा ${lesson.id}/${lessons.length}`;
+            document.getElementById('task-instruction').innerHTML = lesson.instruction;
+
+            // Reset/Initialize specific app editor content
+            if (activeApp === 'word') {
+                const editor = document.getElementById('word-editor');
+                editor.innerHTML = lesson.initial ? lesson.initial.replace(/\n/g, '<br>') : '';
+            } else if (activeApp === 'excel') {
+                renderExcelGrid();
+            } else if (activeApp === 'ppt') {
+                renderPPTCanvas();
+            }
+
+            renderLessonsList();
+        }
+
+        // WORD SIMULATOR HELPERS
+        function applyWordStyle(command, value = null) {
+            document.execCommand(command, false, value);
+            document.getElementById('word-editor').focus();
+        }
+
+        function applyWordFontSizePx(pxSize) {
+            document.execCommand('fontSize', false, '7');
+            const fontElements = document.querySelectorAll('#word-editor font[size="7"]');
+            fontElements.forEach(el => {
+                el.removeAttribute('size');
+                el.style.fontSize = pxSize;
+            });
+        }
+
+        function insertWordDate() {
+            const dateStr = new Date().toLocaleDateString('mr-IN');
+            document.execCommand('insertText', false, ` ${dateStr} `);
+        }
+
+        function insertWordImage() {
+            const imgHtml = `<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=300&q=80" alt="Sample" class="max-w-xs h-auto rounded border my-2 inline-block shadow-sm">`;
+            document.execCommand('insertHTML', false, imgHtml);
+        }
+
+        function insertWordTable() {
+            const tableHtml = `<table class="border-collapse border border-slate-400 my-2 w-full text-xs"><tr><th class="border border-slate-300 p-1">अ.क्र.</th><th class="border border-slate-300 p-1">नाव</th><th class="border border-slate-300 p-1">गुण</th></tr><tr><td class="border border-slate-300 p-1">१</td><td class="border border-slate-300 p-1">अमित</td><td class="border border-slate-300 p-1">८५</td></tr></table>`;
+            document.execCommand('insertHTML', false, tableHtml);
+        }
+
+        function resetWordEditor() {
+            loadLesson(currentLessonId);
+        }
+
+        // EXCEL SIMULATOR HELPERS
+        function renderExcelGrid() {
+            const grid = document.getElementById('excel-grid');
+            grid.innerHTML = '';
+
+            let headerRow = '<tr><th></th>';
+            for (let c = 0; c < 8; c++) {
+                headerRow += `<th>${String.fromCharCode(65 + c)}</th>`;
+            }
+            headerRow += '</tr>';
+            grid.innerHTML += headerRow;
+
+            for (let r = 1; r <= 8; r++) {
+                let row = `<tr><th>${r}</th>`;
+                for (let c = 0; c < 8; c++) {
+                    let cellId = `${String.fromCharCode(65 + c)}${r}`;
+                    let val = excelData[cellId] !== undefined ? excelData[cellId] : '';
+                    let isSelected = activeExcelCell === cellId;
+                    row += `<td id="excel-cell-${cellId}" onclick="selectExcelCell('${cellId}')" class="${isSelected ? 'bg-blue-100 border-2 border-emerald-600 font-bold' : ''}">${val}</td>`;
+                }
+                row += '</tr>';
+                grid.innerHTML += row;
+            }
+
+            document.getElementById('excel-active-cell').innerText = activeExcelCell;
+            document.getElementById('excel-formula-bar').value = excelData[activeExcelCell] || '';
+        }
+
+        function selectExcelCell(cellId) {
+            activeExcelCell = cellId;
+            renderExcelGrid();
+        }
+
+        function updateActiveExcelCellFromInput(val) {
+            excelData[activeExcelCell] = val;
+            renderExcelGrid();
+        }
+
+        function executeExcelFormula() {
+            const formula = document.getElementById('excel-formula-bar').value;
+            if (formula.startsWith('=')) {
+                if (formula.includes('SUM')) excelData[activeExcelCell] = 150;
+                else if (formula.includes('AVERAGE')) excelData[activeExcelCell] = 37.5;
+                else if (formula.includes('MAX')) excelData[activeExcelCell] = 50;
+                else if (formula.includes('MIN')) excelData[activeExcelCell] = 20;
+                else if (formula.includes('IF')) excelData[activeExcelCell] = 'Pass';
+                else excelData[activeExcelCell] = 'Formula OK';
+            }
+            renderExcelGrid();
+        }
+
+        function resetExcelSheet() {
+            excelData = { 'B2': 20, 'B3': 30, 'B4': 40, 'B5': 60 };
+            renderExcelGrid();
+        }
+
+        // PPT SIMULATOR HELPERS
+        function renderPPTCanvas() {
+            const slide = pptSlides[activeSlideIdx];
+            document.getElementById('ppt-slide-title').innerText = slide.title;
+            document.getElementById('ppt-slide-subtitle').innerText = slide.subtitle;
+
+            const shapesContainer = document.getElementById('ppt-shapes-container');
+            shapesContainer.innerHTML = '';
+            slide.shapes.forEach(shape => {
+                const elem = document.createElement('div');
+                elem.className = shape === 'circle' ? 'w-12 h-12 bg-orange-500 rounded-full shadow' : 'w-16 h-10 bg-blue-500 rounded shadow';
+                shapesContainer.appendChild(elem);
+            });
+
+            // Thumbnails
+            const thumbs = document.getElementById('ppt-thumbnails');
+            thumbs.innerHTML = '';
+            pptSlides.forEach((s, idx) => {
+                const thumb = document.createElement('div');
+                thumb.onclick = () => { activeSlideIdx = idx; renderPPTCanvas(); };
+                thumb.className = `p-2 bg-white rounded border cursor-pointer text-[10px] text-center font-bold ${activeSlideIdx === idx ? 'border-orange-500 ring-2 ring-orange-300' : 'border-slate-300'}`;
+                thumb.innerText = `स्लाईड ${idx + 1}`;
+                thumbs.appendChild(thumb);
+            });
+        }
+
+        function addPPTSlide() {
+            pptSlides.push({ title: 'नवीन स्लाईड ' + (pptSlides.length + 1), subtitle: 'तपशील भरा', shapes: [] });
+            activeSlideIdx = pptSlides.length - 1;
+            renderPPTCanvas();
+        }
+
+        function applyPPTTheme(theme) {
+            activePPTTheme = theme;
+            const canvas = document.getElementById('ppt-slide-canvas');
+            if (theme === 'dark') canvas.className = "w-full max-w-xl aspect-video bg-slate-900 text-white rounded-lg shadow-lg border border-slate-700 p-6 flex flex-col justify-center items-center relative transition-all duration-300 overflow-hidden";
+            else if (theme === 'ocean') canvas.className = "w-full max-w-xl aspect-video bg-blue-900 text-white rounded-lg shadow-lg border border-blue-700 p-6 flex flex-col justify-center items-center relative transition-all duration-300 overflow-hidden";
+            else if (theme === 'sunset') canvas.className = "w-full max-w-xl aspect-video bg-gradient-to-r from-orange-500 to-rose-500 text-white rounded-lg shadow-lg border p-6 flex flex-col justify-center items-center relative transition-all duration-300 overflow-hidden";
+            else canvas.className = "w-full max-w-xl aspect-video bg-white text-slate-800 rounded-lg shadow-lg border border-slate-300 p-6 flex flex-col justify-center items-center relative transition-all duration-300 overflow-hidden";
+        }
+
+        function setPPTTransition(trans) {
+            activePPTTransition = trans;
+        }
+
+        function addPPTShape(shapeType) {
+            pptSlides[activeSlideIdx].shapes.push(shapeType);
+            renderPPTCanvas();
+        }
+
+        function playPPTSlideShow() {
+            const canvas = document.getElementById('ppt-slide-canvas');
+            canvas.classList.add(`slide-transition-${activePPTTransition !== 'none' ? activePPTTransition : 'fade'}`);
+            setTimeout(() => {
+                canvas.className = canvas.className.replace(/slide-transition-\w+/g, '');
+            }, 800);
+        }
+
+        function resetPPTSlide() {
+            pptSlides = [{ title: 'मुख्य शीर्षक (Title)', subtitle: 'उपशीर्षक किंवा तपशील (Subtitle)', shapes: [] }];
+            activeSlideIdx = 0;
+            renderPPTCanvas();
+        }
+
+        // EVALUATION & CHECK ANSWER ENGINE
+        function checkAnswer() {
+            const lessons = allLessonsData[activeApp] || [];
+            const lesson = lessons.find(l => l.id === currentLessonId);
+            if (!lesson) return;
+
+            let result = { success: false, msg: 'कृपया कृती करा.' };
+
+            if (activeApp === 'word') {
+                const editor = document.getElementById('word-editor');
+                result = lesson.validate(editor.innerText, editor);
+            } else if (activeApp === 'excel') {
+                result = lesson.validate();
+            } else if (activeApp === 'ppt') {
+                result = lesson.validate();
+            }
+
+            const banner = document.getElementById('feedback-banner');
+            const icon = document.getElementById('feedback-icon');
+            const status = document.getElementById('feedback-status');
+            const message = document.getElementById('feedback-message');
+            const nextBtn = document.getElementById('btn-next-lesson');
+
+            banner.classList.remove('hidden');
+
+            if (result.success) {
+                banner.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-300 text-emerald-900 shadow transition-all duration-300';
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600"></i>';
+                status.innerText = 'उत्तर बरोबर आहे! 🎉 (Correct Answer)';
+                message.innerText = result.msg;
+
+                completedLessons.add(`${activeApp}-${currentLessonId}`);
+                updateProgressUI();
+                renderLessonsList();
+
+                if (currentLessonId < lessons.length) {
+                    nextBtn.classList.remove('hidden');
+                }
+            } else {
+                banner.className = 'p-4 rounded-xl border bg-rose-50 border-rose-300 text-rose-900 shadow transition-all duration-300';
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-600"></i>';
+                status.innerText = 'अद्याप बाकी आहे ⚠️ (Try Again)';
+                message.innerText = result.msg;
+                nextBtn.classList.add('hidden');
+            }
+        }
+
+        function nextLesson() {
+            const lessons = allLessonsData[activeApp] || [];
+            if (currentLessonId < lessons.length) {
+                loadLesson(currentLessonId + 1);
+            }
+        }
+
+        function updateProgressUI() {
+            const total = 90;
+            const completed = completedLessons.size;
+            document.getElementById('overall-progress').innerText = `एकूण प्रगती: ${completed} / ${total} धडे पूर्ण`;
+        }
+
+        // INITIALIZE APPLICATION ON WINDOW LOAD
+        window.onload = function() {
+            switchApp('word');
+        };
+    </script>
+</body>
+</html>
